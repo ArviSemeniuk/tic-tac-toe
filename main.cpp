@@ -157,13 +157,23 @@ int main()
 	while (win != true)
 	{
 		// human player move
-		humanMove = human.playerMove();
+		humanMove = human.playerMove(grid);
 		grid = updateGrid(grid, humanMove, human);
 		win = winCondition(grid);
+		if (win) {
+			cout << "Congratulations " << human.getName() << " You Won!" << endl;
+			break;
+		}
 
 		// computer player move
 		compMove = comp.playerMove(grid);
-	} 
+		grid = updateGrid(grid, compMove, comp);
+		win = winCondition(grid);
+		if (win) {
+			cout << "Unlucky " << comp.getName() << " Won the game!" << endl;
+			break;
+		}
+	}
 
 	return 0;
 }
