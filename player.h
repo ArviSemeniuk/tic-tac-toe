@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <iostream>
+#include <random>
 using namespace std;
 
 class Player 
@@ -16,7 +17,7 @@ public:
 	void setSymbol(string);
 
 	// player move function
-	int playerMove();
+	int playerMove(vector<vector<string>> grid);
 
 	// getters
 	bool getHuman() const { return human; }
@@ -79,12 +80,8 @@ void Player::setSymbol(string humanSymbol)
 }
 
 
-int Player::playerMove()
+int userInputValid(int playerMove)
 {
-	int playerMove;
-	cout << "Choose position on the grid: ";
-	cin >> playerMove;
-
 	while (playerMove < 0 || playerMove > 24 || cin.fail() || cin.peek() == '.' || cin.peek() == ' ' || !isspace(cin.peek()))
 	{
 		cout << "Invalid input! Try again: ";
@@ -96,7 +93,66 @@ int Player::playerMove()
 }
 
 
+int positionChosenCheck(int playerMove, vector<vector<string>> grid)
+{
+	// compute grid index of player move
+	int row = playerMove / 5;
+	int col = playerMove % 5;
+
+	while (grid[row][col] == "X" || grid[row][col] == "O")
+	{
+		cout << "Position already taken! Try again: ";
+		cin >> playerMove;
+		playerMove = userInputValid(playerMove);
+		row = playerMove / 5;
+		col = playerMove % 5;
+	}
+	return playerMove;
+}
+
+
+int Player::playerMove(vector<vector<string>> grid)
+{
+	int playerMove;
+	cout << "Choose position on the grid: ";
+	cin >> playerMove;
+	playerMove = userInputValid(playerMove);
+	playerMove = positionChosenCheck(playerMove, grid);
+	return playerMove;
+}
+
+
 int Computer::playerMove(vector<vector<string>> grid)
 {
-	return 7;
+	int playerMove;
+	// if middle is not taken then take it
+	if (grid[2][2] != "X" && grid[2][2] != "O")
+	{
+		playerMove = 12;
+		return playerMove;
+	}
+	else
+	{
+		random_device seed;
+		mt19937 gen{ seed() };
+		uniform_int_distribution<> dist{ 0, 24 };
+		playerMove = dist(gen);
+
+		while (playerMove == 12)
+		{
+			playerMove = dist(gen);
+		}
+
+		// compute grid index of player move
+		int row = playerMove / 5;
+		int col = playerMove % 5;
+
+		while (grid[row][col] == "X" || grid[row][col] == "O")
+		{
+			playerMove = dist(gen);
+			row = playerMove / 5;
+			col = playerMove % 5;
+		}
+		return playerMove;
+	}
 }
