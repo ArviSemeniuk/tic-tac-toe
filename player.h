@@ -23,6 +23,13 @@ public:
 	bool getHuman() const { return human; }
 	string getName() const { return name; }
 	string getSymbol() const { return symbol; }
+	
+	// constructor
+	Player() 
+	{
+		human = false;
+		name = "Computer";
+	};
 };
 
 
@@ -41,13 +48,8 @@ void Player::setHuman(bool h)
 
 void Player::setName()
 {
-	if (human) {
-		cout << "Player name: ";
-		cin >> name;
-	}
-	else {
-		name = "Computer";
-	}
+	cout << "Player name: ";
+	cin >> name;
 }
 
 
