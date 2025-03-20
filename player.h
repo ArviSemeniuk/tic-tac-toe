@@ -40,7 +40,7 @@ public:
 };
 
 
-void Player::setHuman(bool h)
+void Player::setHuman(const bool h)
 {
 	human = h;
 }
@@ -95,7 +95,7 @@ int userInputValid(int playerMove)
 }
 
 
-int positionChosenCheck(int playerMove, vector<vector<string>> grid)
+int positionChosenCheck(int playerMove, const vector<vector<string>> grid)
 {
 	// compute grid index of player move
 	int row = playerMove / 5;
@@ -113,7 +113,7 @@ int positionChosenCheck(int playerMove, vector<vector<string>> grid)
 }
 
 
-int Player::playerMove(vector<vector<string>> grid)
+int Player::playerMove(const vector<vector<string>> grid)
 {
 	int playerMove;
 	cout << "Choose position on the grid: ";
@@ -124,7 +124,90 @@ int Player::playerMove(vector<vector<string>> grid)
 }
 
 
-int Computer::playerMove(vector<vector<string>> grid)
+vector<vector<string>> transposeGrid(const vector<vector<string>> grid)
+{
+	vector<vector<string>> transposedGrid(grid[0].size(), vector<string>());
+
+	for (int row = 0; row < 5; row++) {
+		for (int col = 0; col < 5; col++) {
+			transposedGrid[col].push_back(grid[row][col]);
+		}
+	}
+	return transposedGrid;
+}
+
+
+// function to retrieve the vlaues of the diagonals and store then in a 1D vector
+vector<string> collectDiag(const vector<vector<string>> grid, const bool collectLeftDiag)
+{
+	if (collectLeftDiag) {
+		vector<string> leftDiagList;
+		for (int row = 0; row < 5; row++) {
+			leftDiagList.push_back(grid[row][row]);
+		}
+		return leftDiagList;
+	}
+	else {
+		size_t size = grid.size();
+		vector<string> rightDiagList;
+		for (int row = 0; row < 5; row++) {
+			rightDiagList.push_back(grid[row][size - 1 - row]);
+		}
+		return rightDiagList;
+	}
+}
+
+
+int fourToFind(const vector<vector<string>> grid)
+{
+	int playerMove = -1;
+	vector<vector<string>> transposedGrid = transposeGrid(grid);
+
+	// check each row and col to see if there is four O or X
+	for (int row = 0; row < 5; row++) {
+		if (count(grid[row].begin(), grid[row].end(), "X") == 4 || count(grid[row].begin(), grid[row].end(), "O") == 4) {
+			for (int col = 0; col < 5; col++) {
+				if (grid[row][col] != "X" && grid[row][col] != "O") {
+					playerMove = stoi(grid[row][col]);
+					return playerMove;
+				}
+			}
+		}
+		if (count(transposedGrid[row].begin(), transposedGrid[row].end(), "X") == 4 || count(transposedGrid[row].begin(), transposedGrid[row].end(), "O") == 4) {
+			for (int col = 0; col < 5; col++) {
+				if (transposedGrid[row][col] != "X" && transposedGrid[row][col] != "O") {
+					playerMove = stoi(transposedGrid[row][col]);
+					return playerMove;
+				}
+			}
+		}
+	}
+
+	// check diagonals to see if there are four
+	vector<string> leftDiagList = collectDiag(grid, true);
+	vector<string> rightDiagList = collectDiag(grid, false);
+	
+	if (count(leftDiagList.begin(), leftDiagList.end(), "X") == 4 || count(leftDiagList.begin(), leftDiagList.end(), "O") == 4) {
+		for (int col = 0; col < 5; col++) {
+			if (leftDiagList[col] != "X" && leftDiagList[col] != "O") {
+				playerMove = stoi(leftDiagList[col]);
+				return playerMove;
+			}
+		}
+	}
+	if (count(rightDiagList.begin(), rightDiagList.end(), "X") == 4 || count(rightDiagList.begin(), rightDiagList.end(), "O") == 4) {
+		for (int col = 0; col < 5; col++) {
+			if (rightDiagList[col] != "X" && rightDiagList[col] != "O") {
+				playerMove = stoi(rightDiagList[col]);
+				return playerMove;
+			}
+		}
+	}
+	return playerMove;
+}
+
+
+int Computer::playerMove(const vector<vector<string>> grid)
 {
 	int playerMove;
 	// if middle is not taken then take it
@@ -135,6 +218,10 @@ int Computer::playerMove(vector<vector<string>> grid)
 	}
 	else
 	{
+		playerMove = fourToFind(grid);
+		if (playerMove != -1)
+			return playerMove;
+		
 		random_device seed;
 		mt19937 gen{ seed() };
 		uniform_int_distribution<> dist{ 0, 24 };
