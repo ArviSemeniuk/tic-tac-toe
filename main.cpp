@@ -23,7 +23,7 @@ vector<vector<string>> createDisplayGrid()
 }
 
 
-vector<vector<string>> showGrid(vector<vector<string>> matrix)
+vector<vector<string>> showGrid(const vector<vector<string>> matrix)
 {
 	// Display 5x5 grid
 	ostringstream oss;
@@ -44,7 +44,7 @@ vector<vector<string>> showGrid(vector<vector<string>> matrix)
 }
 
 
-vector<vector<string>> updateGrid(vector<vector<string>> oldGrid, int playerMove, Player p, vector<vector<string>> helpGrid)
+vector<vector<string>> updateGrid(vector<vector<string>> oldGrid, const int playerMove, const Player p, const vector<vector<string>> helpGrid)
 {
 	ostringstream oss;
 
@@ -92,7 +92,7 @@ vector<vector<string>> updateGrid(vector<vector<string>> oldGrid, int playerMove
 }
 
 
-bool colWin(const vector<vector<string>> grid, int col)
+bool colWin(const vector<vector<string>> grid, const int col)
 {
 	for (int i = 1; i < 5; i++) {
 		if (grid[i][col] != grid[0][col]) {
@@ -138,26 +138,6 @@ bool rightDiagWin(const vector<vector<string>> grid)
 		}
 	}
 	return true;
-}
-
-
-vector<string> collectDiag(const vector<vector<string>> grid, bool collectLeftDiag)
-{
-	if (collectLeftDiag) {
-		vector<string> leftDiagList;
-		for (int row = 0; row < 5; row++) {
-			leftDiagList.push_back(grid[row][row]);
-		}
-		return leftDiagList;
-	}
-	else {
-		size_t size = grid.size();
-		vector<string> rightDiagList;
-		for (int row = 0; row < 5; row++) {
-			rightDiagList.push_back(grid[row][size - 1 - row]);
-		}
-		return rightDiagList;
-	}
 }
 
 
@@ -230,7 +210,7 @@ bool winCondition(const vector<vector<string>> grid)
 }
 
 
-bool winCheck(vector<vector<string>> grid, Player p)
+bool winCheck(const vector<vector<string>> grid, const Player p)
 {
 	bool win = winCondition(grid);
 
@@ -246,7 +226,7 @@ bool winCheck(vector<vector<string>> grid, Player p)
 }
 
 
-bool drawCheck(vector<vector<string>> grid)
+bool drawCheck(const vector<vector<string>> grid)
 {
 	bool draw = drawCondition(grid);
 
