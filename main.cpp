@@ -3,6 +3,7 @@
 #include <vector>
 #include <unordered_set>
 #include <limits>  // For clearing input buffer
+#include <algorithm>
 #include "player.h"
 using namespace std;
 
@@ -121,10 +122,31 @@ bool rightDiagWin(const vector<vector<string>> grid)
 }
 
 
+vector<string> collectDiag(const vector<vector<string>> grid, bool collectLeftDiag)
+{
+	if (collectLeftDiag) {
+		vector<string> leftDiagList;
+		for (int row = 0; row < 5; row++) {
+			leftDiagList.push_back(grid[row][row]);
+		}
+		return leftDiagList;
+	}
+	else {
+		size_t size = grid.size();
+		vector<string> rightDiagList;
+		for (int row = 0; row < 5; row++) {
+			rightDiagList.push_back(grid[row][size - 1 - row]);
+		}
+		return rightDiagList;
+	}
+}
+
+
 bool drawCondition(const vector<vector<string>> grid)
 {
 	vector<bool> possibleWin; // vector to store bool values which represent if the game can still be won
-
+	size_t size = grid.size();
+	
 	// checks to see if row wins are possible
 	for (const auto& row : grid) {
 		auto itX = find(row.begin(), row.end(), "X");
@@ -136,7 +158,7 @@ bool drawCondition(const vector<vector<string>> grid)
 	}
 
 	// checks to see if col wins are possible
-	for (int col = 0; col < 5; col++) {
+	for (int col = 0; col < size; col++) {
 		if (any_of(grid.begin(), grid.end(), [&](const vector<string> row) {return row[col] == "X";}) &&
 			any_of(grid.begin(), grid.end(), [&](const vector<string> row) {return row[col] == "O";})) {
 			possibleWin.push_back(false);
@@ -144,7 +166,20 @@ bool drawCondition(const vector<vector<string>> grid)
 		else
 			possibleWin.push_back(true);
 	}
+	
+	// checks if diag wins are possible
+	vector<string> leftDiagList = collectDiag(grid, true);
+	vector<string> rightDiagList = collectDiag(grid, false);
 
+	if (any_of(leftDiagList.begin(), leftDiagList.end(), [&](const string symbol) {return symbol == "X";}) &&
+		any_of(leftDiagList.begin(), leftDiagList.end(), [&](const string symbol) {return symbol == "O";}) &&
+		any_of(rightDiagList.begin(), rightDiagList.end(), [&](const string symbol) {return symbol == "X";}) &&
+		any_of(rightDiagList.begin(), rightDiagList.end(), [&](const string symbol) {return symbol == "O";}))
+		possibleWin.push_back(false);
+	else
+		possibleWin.push_back(true);
+
+	// determine if win is possible
 	if (all_of(possibleWin.begin(), possibleWin.end(), [](bool i) {return i == false;}))
 		return true;
 	else
@@ -176,6 +211,34 @@ bool winCondition(const vector<vector<string>> grid)
 }
 
 
+bool winCheck(vector<vector<string>> grid, Player p)
+{
+	bool win = winCondition(grid);
+
+	if (win && p.getHuman() == true) {
+		cout << "Congratulations " << p.getName() << " You Won!" << endl;
+		return true;
+	}
+	else if (win) {
+		cout << "Unlucky! " << p.getName() << " Won the game!" << endl;
+		return true;
+	}
+	return false;
+}
+
+
+bool drawCheck(vector<vector<string>> grid)
+{
+	bool draw = drawCondition(grid);
+
+	if (draw) {
+		cout << "Game ends in a draw!" << endl;
+		return true;
+	}
+	return false;
+}
+
+
 int main()
 {
 	Player human;
@@ -184,8 +247,6 @@ int main()
 	human.setSymbol("");
 
 	Computer comp;
-	comp.setHuman(false);
-	comp.setName();
 	comp.setSymbol(human.getSymbol());
 
 	bool win = false;
@@ -199,34 +260,20 @@ int main()
 		// human player move
 		humanMove = human.playerMove(grid);
 		grid = updateGrid(grid, humanMove, human);
-		win = winCondition(grid);
-		if (win) {
-			cout << "Congratulations " << human.getName() << " You Won!" << endl;
+		if (win = winCheck(grid, human))
 			break;
-		}
 
-		// draw check
-		draw = drawCondition(grid);
-		if (draw) {
-			cout << "Game ends in a draw!" << endl;
+		if (draw = drawCheck(grid)) 
 			break;
-		}
-
+	
 		// computer player move
 		compMove = comp.playerMove(grid);
 		grid = updateGrid(grid, compMove, comp);
-		win = winCondition(grid);
-		if (win) {
-			cout << "Unlucky " << human.getName() << " " << comp.getName() << " Won the game!" << endl;
+		if (win = winCheck(grid, comp))
 			break;
-		}
 
-		// draw check
-		draw = drawCondition(grid);
-		if (draw) {
-			cout << "Game ends in a draw!" << endl;
+		if (draw = drawCheck(grid))
 			break;
-		}
 	}
 
 	return 0;
