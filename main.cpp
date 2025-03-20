@@ -8,7 +8,7 @@
 using namespace std;
 
 
-vector<vector<string>> createGrid()
+vector<vector<string>> createDisplayGrid()
 {
 	// initialise 5x5 matrix
 	vector<vector<string>> matrix(5, vector<string>(5));
@@ -19,7 +19,12 @@ vector<vector<string>> createGrid()
 			matrix[i][j] = to_string(start++);
 		}
 	}
+	return matrix;
+}
 
+
+vector<vector<string>> showGrid(vector<vector<string>> matrix)
+{
 	// Display 5x5 grid
 	ostringstream oss;
 	for (int i = 0; i < 5; i++)
@@ -39,14 +44,14 @@ vector<vector<string>> createGrid()
 }
 
 
-vector<vector<string>> updateGrid(vector<vector<string>> oldGrid, int playerMove, Player p)
+vector<vector<string>> updateGrid(vector<vector<string>> oldGrid, int playerMove, Player p, vector<vector<string>> helpGrid)
 {
 	ostringstream oss;
 
 	// make new vector to display results to user
 	vector<vector<string>> displayGrid = oldGrid;
 
-	// Compute the exact 2d array index the player chooses   
+	// compute the exact 2d array index the player chooses   
 	int row = playerMove / 5;
 	int col = playerMove % 5;
 	oldGrid[row][col] = p.getSymbol();
@@ -59,13 +64,27 @@ vector<vector<string>> updateGrid(vector<vector<string>> oldGrid, int playerMove
 		}
 	}
 	
-	// Display 5x5 grid
+	// display updated 5x5 grid
+	// along side the playing grid, display helpful grid
 	for (int i = 0; i < 5; i++)
 	{
-		oss << "  " << displayGrid[i][0] << "  |  " << displayGrid[i][1] << "  |  " << displayGrid[i][2] << "  |  " << displayGrid[i][3] << "  |  " << displayGrid[i][4] << "  \n";
-
-		if (i < 4)
-			oss << "-----|-----|-----|-----|-----\n";
+		if (p.getHuman() == false) {
+			if (i < 2) {
+				oss << "  " << displayGrid[i][0] << "  |  " << displayGrid[i][1] << "  |  " << displayGrid[i][2] << "  |  " << displayGrid[i][3] << "  |  " << displayGrid[i][4]
+					<< "		" << helpGrid[i][0] << "  |  " << helpGrid[i][1] << "  |  " << helpGrid[i][2] << "  |  " << helpGrid[i][3] << "  |  " << helpGrid[i][4] << "  \n";
+			}
+			else {
+				oss << "  " << displayGrid[i][0] << "  |  " << displayGrid[i][1] << "  |  " << displayGrid[i][2] << "  |  " << displayGrid[i][3] << "  |  " << displayGrid[i][4]
+					<< "		" << helpGrid[i][0] << " |  " << helpGrid[i][1] << " |  " << helpGrid[i][2] << " |  " << helpGrid[i][3] << " |  " << helpGrid[i][4] << "  \n";
+			}
+			if (i < 4)
+				oss << "-----|-----|-----|-----|-----	      -----|-----|-----|-----|-----\n";
+		}
+		else {
+			oss << "  " << displayGrid[i][0] << "  |  " << displayGrid[i][1] << "  |  " << displayGrid[i][2] << "  |  " << displayGrid[i][3] << "  |  " << displayGrid[i][4] << "  \n";
+			if (i < 4)
+				oss << "-----|-----|-----|-----|-----\n";
+		}
 	}
 	string newGrid = oss.str();
 	cout << endl << newGrid << endl;
@@ -253,13 +272,14 @@ int main()
 	bool draw = false;
 	int humanMove;
 	int compMove;
-	vector<vector<string>> grid = createGrid(); // initialise the 5x5 grid
+	vector<vector<string>> helpGrid = createDisplayGrid(); // initialise the 5x5 grid
+	vector<vector<string>> grid = showGrid(helpGrid);
 
 	while (win != true && draw != true)
 	{
 		// human player move
 		humanMove = human.playerMove(grid);
-		grid = updateGrid(grid, humanMove, human);
+		grid = updateGrid(grid, humanMove, human, helpGrid);
 		if (win = winCheck(grid, human))
 			break;
 
@@ -268,7 +288,7 @@ int main()
 	
 		// computer player move
 		compMove = comp.playerMove(grid);
-		grid = updateGrid(grid, compMove, comp);
+		grid = updateGrid(grid, compMove, comp, helpGrid);
 		if (win = winCheck(grid, comp))
 			break;
 
