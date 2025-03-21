@@ -11,3 +11,5 @@
 /tic-tac-toe/x64/Debug/tic-tac-toe.ilk
 /tic-tac-toe/x64/Debug/vc143.idb
 /tic-tac-toe/x64/Debug/vc143.pdb
+*.exe
+*.obj
