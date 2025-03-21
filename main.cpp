@@ -5,6 +5,7 @@
 #include <limits>  // For clearing input buffer
 #include <algorithm>
 #include "player.h"
+//#include "grid.h"
 using namespace std;
 
 
@@ -244,16 +245,24 @@ int main()
 	human.setHuman(true);
 	human.setName();
 	human.setSymbol("");
+	string const humanSymbol = human.getSymbol();
+	bool const isHuman = human.getHuman();
 
 	Computer comp;
 	comp.setSymbol(human.getSymbol());
+	string const compSymbol = comp.getSymbol();
+	bool const isComp = comp.getHuman();
 
 	bool win = false;
 	bool draw = false;
 	int humanMove;
 	int compMove;
+	// grid formation
 	vector<vector<string>> helpGrid = createDisplayGrid(); // initialise the 5x5 grid
 	vector<vector<string>> grid = showGrid(helpGrid);
+	//Grid gridObject;
+	//vector<vector<string>> helpGrid = gridObject.createDisplayGrid();
+	//vector<vector<string>> grid = gridObject.showGrid(helpGrid);
 
 	while (win != true && draw != true)
 	{
@@ -268,7 +277,7 @@ int main()
 	
 		// computer player move
 		compMove = comp.playerMove(grid);
-		grid = updateGrid(grid, compMove, comp, helpGrid);
+		grid = updateGrid(grid, compMove, human, helpGrid);
 		if (win = winCheck(grid, comp))
 			break;
 

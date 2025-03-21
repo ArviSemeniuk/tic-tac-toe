@@ -4,6 +4,7 @@
 #include <random>
 using namespace std;
 
+
 class Player 
 {
 private:
@@ -50,6 +51,14 @@ void Player::setName()
 {
 	cout << "Player name: ";
 	cin >> name;
+	
+	while (cin.peek() == ' ' || !isspace(cin.peek()))
+	{
+		cout << "Name can't contain spaces! Try again: ";
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		cin >> name;
+	}
 }
 
 
@@ -60,7 +69,7 @@ void Player::setSymbol(string humanSymbol)
 		cout << "Choose symbol 'O' or 'X': ";
 		cin >> symbol;
 
-		while (symbol != "X" && symbol != "O")
+		while (symbol != "X" && symbol != "O" || cin.fail() || cin.peek() == '.' || cin.peek() == ' ' || !isspace(cin.peek()))
 		{
 			cout << "Invalid input! Try again: ";
 			cin.clear();
