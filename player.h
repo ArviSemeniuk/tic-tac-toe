@@ -168,30 +168,53 @@ vector<string> collectDiag(const vector<vector<string>> grid, const bool collect
 }
 
 
-int fourToFind(const vector<vector<string>> grid)
+// function to win or block 4 in a row/col
+int winOrBlockFour(const vector<vector<string>> grid, const string symbol)
 {
-	int playerMove = -1;
+	int move = -1;
 	vector<vector<string>> transposedGrid = transposeGrid(grid);
 
 	// check each row and col to see if there is four O or X
 	for (int row = 0; row < 5; row++) {
-		if (count(grid[row].begin(), grid[row].end(), "X") == 4 || count(grid[row].begin(), grid[row].end(), "O") == 4) {
+		if (count(grid[row].begin(), grid[row].end(), symbol) == 4) {
 			for (int col = 0; col < 5; col++) {
 				if (grid[row][col] != "X" && grid[row][col] != "O") {
-					playerMove = stoi(grid[row][col]);
-					return playerMove;
+					move = stoi(grid[row][col]);
+					return move;
 				}
 			}
 		}
-		if (count(transposedGrid[row].begin(), transposedGrid[row].end(), "X") == 4 || count(transposedGrid[row].begin(), transposedGrid[row].end(), "O") == 4) {
+		if (count(transposedGrid[row].begin(), transposedGrid[row].end(), symbol) == 4) {
 			for (int col = 0; col < 5; col++) {
 				if (transposedGrid[row][col] != "X" && transposedGrid[row][col] != "O") {
-					playerMove = stoi(transposedGrid[row][col]);
-					return playerMove;
+					move = stoi(transposedGrid[row][col]);
+					return move;
 				}
 			}
 		}
 	}
+	return move;
+}
+
+
+// function to find any 4 in a row/col/diag
+int fourToFind(const vector<vector<string>> grid, const string compSymbol)
+{
+	int playerMove = -1; // set to -1 to denote no 4 in a row found
+	string winningSymbol = compSymbol;
+	string losingSymbol;
+
+	if (winningSymbol == "X")
+		losingSymbol = "O";
+	else
+		losingSymbol = "X";
+	
+	playerMove = winOrBlockFour(grid, winningSymbol);
+	if (playerMove != -1)
+		return playerMove;
+	playerMove = winOrBlockFour(grid, losingSymbol);
+	if (playerMove != -1)
+		return playerMove;
 
 	// check diagonals to see if there are four
 	vector<string> leftDiagList = collectDiag(grid, true);
@@ -213,10 +236,12 @@ int fourToFind(const vector<vector<string>> grid)
 			}
 		}
 	}
+
 	return playerMove;
 }
 
 
+// computer move logic 
 int Computer::playerMove(const vector<vector<string>> grid)
 {
 	int playerMove;
@@ -228,7 +253,7 @@ int Computer::playerMove(const vector<vector<string>> grid)
 	}
 	else
 	{
-		playerMove = fourToFind(grid);
+		playerMove = fourToFind(grid, this->symbol);
 		if (playerMove != -1)
 			return playerMove;
 		
