@@ -1,98 +1,11 @@
 #include <iostream>
-#include <sstream>
 #include <vector>
-#include <unordered_set>
-#include <limits>  // For clearing input buffer
-#include <algorithm>
 #include "player.h"
+#include "grid.h"
 using namespace std;
 
 
-vector<vector<string>> createDisplayGrid()
-{
-	// initialise 5x5 matrix
-	vector<vector<string>> matrix(5, vector<string>(5));
-	int start = 0;
-
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 5; j++) {
-			matrix[i][j] = to_string(start++);
-		}
-	}
-	return matrix;
-}
-
-
-vector<vector<string>> showGrid(const vector<vector<string>> matrix)
-{
-	// Display 5x5 grid
-	ostringstream oss;
-	for (int i = 0; i < 5; i++)
-	{
-		if (i < 2) {
-			oss << "  " << matrix[i][0] << "  |  " << matrix[i][1] << "  |  " << matrix[i][2] << "  |  " << matrix[i][3] << "  |  " << matrix[i][4] << "  \n";
-		} else {
-			oss << "  " << matrix[i][0] << " |  " << matrix[i][1] << " |  " << matrix[i][2] << " |  " << matrix[i][3] << " |  " << matrix[i][4] << "  \n";
-		}
-		if (i < 4) {
-			oss << "-----|-----|-----|-----|-----\n";
-		}
-	}
-	string newGrid = oss.str();
-	cout << endl << newGrid << endl;
-	return matrix;
-}
-
-
-vector<vector<string>> updateGrid(vector<vector<string>> oldGrid, const int playerMove, const Player p, const vector<vector<string>> helpGrid)
-{
-	ostringstream oss;
-
-	// make new vector to display results to user
-	vector<vector<string>> displayGrid = oldGrid;
-
-	// compute the exact 2d array index the player chooses   
-	int row = playerMove / 5;
-	int col = playerMove % 5;
-	oldGrid[row][col] = p.getSymbol();
-	displayGrid[row][col] = p.getSymbol();
-
-	for (int i = 0; i < 5; i++) {
-		for (int j = 0; j < 5; j++) {
-			if (oldGrid[i][j] != "X" && oldGrid[i][j] != "O")
-				displayGrid[i][j] = " ";
-		}
-	}
-	
-	// display updated 5x5 grid
-	// along side the playing grid, display helpful grid
-	for (int i = 0; i < 5; i++)
-	{
-		if (p.getHuman() == false) {
-			if (i < 2) {
-				oss << "  " << displayGrid[i][0] << "  |  " << displayGrid[i][1] << "  |  " << displayGrid[i][2] << "  |  " << displayGrid[i][3] << "  |  " << displayGrid[i][4]
-					<< "		" << helpGrid[i][0] << "  |  " << helpGrid[i][1] << "  |  " << helpGrid[i][2] << "  |  " << helpGrid[i][3] << "  |  " << helpGrid[i][4] << "  \n";
-			}
-			else {
-				oss << "  " << displayGrid[i][0] << "  |  " << displayGrid[i][1] << "  |  " << displayGrid[i][2] << "  |  " << displayGrid[i][3] << "  |  " << displayGrid[i][4]
-					<< "		" << helpGrid[i][0] << " |  " << helpGrid[i][1] << " |  " << helpGrid[i][2] << " |  " << helpGrid[i][3] << " |  " << helpGrid[i][4] << "  \n";
-			}
-			if (i < 4)
-				oss << "-----|-----|-----|-----|-----	      -----|-----|-----|-----|-----\n";
-		}
-		else {
-			oss << "  " << displayGrid[i][0] << "  |  " << displayGrid[i][1] << "  |  " << displayGrid[i][2] << "  |  " << displayGrid[i][3] << "  |  " << displayGrid[i][4] << "  \n";
-			if (i < 4)
-				oss << "-----|-----|-----|-----|-----\n";
-		}
-	}
-	string newGrid = oss.str();
-	cout << endl << newGrid << endl;
-	return oldGrid;
-}
-
-
-bool colWin(const vector<vector<string>> grid, const int col)
+static bool colWin(const vector<vector<string>> grid, const int col)
 {
 	for (int i = 1; i < 5; i++) {
 		if (grid[i][col] != grid[0][col]) {
@@ -103,7 +16,7 @@ bool colWin(const vector<vector<string>> grid, const int col)
 }
 
 
-bool rowWin(const vector<string> &row)
+static bool rowWin(const vector<string> &row)
 {
 	for (size_t i = 1; i < row.size(); i++) {
 		if (row[i] != row[0]) {
@@ -114,7 +27,7 @@ bool rowWin(const vector<string> &row)
 }
 
 
-bool leftDiagWin(const vector<vector<string>> grid)
+static bool leftDiagWin(const vector<vector<string>> grid)
 {
 	string leftDiag = grid[0][0];
 
@@ -127,7 +40,7 @@ bool leftDiagWin(const vector<vector<string>> grid)
 }
 
 
-bool rightDiagWin(const vector<vector<string>> grid)
+static bool rightDiagWin(const vector<vector<string>> grid)
 {
 	size_t size = grid.size();
 	string rightDiag = grid[0][size - 1];
@@ -141,7 +54,7 @@ bool rightDiagWin(const vector<vector<string>> grid)
 }
 
 
-bool drawCondition(const vector<vector<string>> grid)
+static bool drawCondition(const vector<vector<string>> grid)
 {
 	vector<bool> possibleWin; // vector to store bool values which represent if the game can still be won
 	size_t size = grid.size();
@@ -187,7 +100,7 @@ bool drawCondition(const vector<vector<string>> grid)
 
 
 // check every win condition 
-bool winCondition(const vector<vector<string>> grid)
+static bool winCondition(const vector<vector<string>> grid)
 {
 	// check each row
 	for (const auto& row : grid) {
@@ -210,7 +123,7 @@ bool winCondition(const vector<vector<string>> grid)
 }
 
 
-bool winCheck(const vector<vector<string>> grid, const Player p)
+static bool winCheck(const vector<vector<string>> grid, const Player p)
 {
 	bool win = winCondition(grid);
 
@@ -226,7 +139,7 @@ bool winCheck(const vector<vector<string>> grid, const Player p)
 }
 
 
-bool drawCheck(const vector<vector<string>> grid)
+static bool drawCheck(const vector<vector<string>> grid)
 {
 	bool draw = drawCondition(grid);
 
@@ -243,23 +156,29 @@ int main()
 	Player human;
 	human.setHuman(true);
 	human.setName();
-	human.setSymbol("");
+	human.setSymbol();
+	string const humanSymbol = human.getSymbol();
+	bool const isHuman = human.getHuman();
 
 	Computer comp;
 	comp.setSymbol(human.getSymbol());
+	string const compSymbol = comp.getSymbol();
+	bool const isComp = comp.getHuman();
 
+	// default game state
 	bool win = false;
 	bool draw = false;
 	int humanMove;
 	int compMove;
-	vector<vector<string>> helpGrid = createDisplayGrid(); // initialise the 5x5 grid
-	vector<vector<string>> grid = showGrid(helpGrid);
+	
+	vector<vector<string>> helpGrid = gridFunctions.createDisplayGrid();
+	vector<vector<string>> grid = gridFunctions.showGrid(helpGrid);
 
 	while (win != true && draw != true)
 	{
 		// human player move
 		humanMove = human.playerMove(grid);
-		grid = updateGrid(grid, humanMove, human, helpGrid);
+		grid = gridFunctions.updateGrid(grid, humanMove, humanSymbol, isHuman, helpGrid);
 		if (win = winCheck(grid, human))
 			break;
 
@@ -268,7 +187,7 @@ int main()
 	
 		// computer player move
 		compMove = comp.playerMove(grid);
-		grid = updateGrid(grid, compMove, comp, helpGrid);
+		grid = gridFunctions.updateGrid(grid, compMove, compSymbol, isComp, helpGrid);
 		if (win = winCheck(grid, comp))
 			break;
 
@@ -276,6 +195,6 @@ int main()
 			break;
 	}
 
-	system("pause");
+	system("pause > nul");
 	return 0;
 }
