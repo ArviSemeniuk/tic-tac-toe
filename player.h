@@ -10,12 +10,13 @@ class Player
 private:
 	bool human;
 	string name;
+protected:
 	string symbol;
 public:
 	// setters
 	void setHuman(bool);
 	void setName();
-	void setSymbol(string);
+	void setSymbol();
 
 	// player move function
 	int playerMove(vector<vector<string>> grid);
@@ -38,6 +39,7 @@ class Computer : public Player
 {
 public:
 	int playerMove(vector<vector<string>> grid);
+	void setSymbol(string humanSysmbol);
 };
 
 
@@ -62,31 +64,17 @@ void Player::setName()
 }
 
 
-void Player::setSymbol(string humanSymbol)
+void Player::setSymbol()
 {
-	if (human) 
+	cout << "Choose symbol 'O' or 'X': ";
+	cin >> symbol;
+	
+	while (symbol != "X" && symbol != "O" || cin.fail() || cin.peek() == '.' || cin.peek() == ' ' || !isspace(cin.peek()))
 	{
-		cout << "Choose symbol 'O' or 'X': ";
+		cout << "Invalid input! Try again: ";
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
 		cin >> symbol;
-
-		while (symbol != "X" && symbol != "O" || cin.fail() || cin.peek() == '.' || cin.peek() == ' ' || !isspace(cin.peek()))
-		{
-			cout << "Invalid input! Try again: ";
-			cin.clear();
-			cin.ignore(numeric_limits<streamsize>::max(), '\n');
-			cin >> symbol;
-		}
-	}
-	else 
-	{
-		if (humanSymbol == "O") 
-		{
-			symbol = "X";
-		}
-		else 
-		{
-			symbol = "O";
-		}
 	}
 }
 
@@ -130,6 +118,19 @@ int Player::playerMove(const vector<vector<string>> grid)
 	playerMove = userInputValid(playerMove);
 	playerMove = positionChosenCheck(playerMove, grid);
 	return playerMove;
+}
+
+
+void Computer::setSymbol(string humanSymbol)
+{
+	if (humanSymbol == "O")
+	{
+		symbol = "X";
+	}
+	else
+	{
+		symbol = "O";
+	}
 }
 
 

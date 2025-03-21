@@ -160,7 +160,7 @@ int main()
 	Player human;
 	human.setHuman(true);
 	human.setName();
-	human.setSymbol("");
+	human.setSymbol();
 	string const humanSymbol = human.getSymbol();
 	bool const isHuman = human.getHuman();
 
@@ -169,6 +169,7 @@ int main()
 	string const compSymbol = comp.getSymbol();
 	bool const isComp = comp.getHuman();
 
+	// default game state
 	bool win = false;
 	bool draw = false;
 	int humanMove;
@@ -198,6 +199,6 @@ int main()
 			break;
 	}
 
-	system("pause");
+	system("pause > nul");
 	return 0;
 }
