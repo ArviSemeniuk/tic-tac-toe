@@ -16,11 +16,11 @@ protected:
 	string symbol;
 public:
 	// setters
-	virtual void setName();
-	virtual void setSymbol();
+	void setName();
+	void setSymbol();
 
 	// player move function
-	virtual int playerMove(vector<vector<string>> grid);
+	int playerMove(vector<vector<string>> grid);
 
 	// getters
 	bool getHuman() const { return human; }
