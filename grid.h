@@ -49,10 +49,10 @@ struct
 	{
 		ostringstream oss;
 
-		// make new vector to display results to user
+		// make new 2d vector to display playing grid to user
 		vector<vector<string>> displayGrid = oldGrid;
 
-		// compute the exact 2d array index the player chooses   
+		// compute the exact 2d index the player chooses
 		int row = playerMove / 5;
 		int col = playerMove % 5;
 		oldGrid[row][col] = symbol;

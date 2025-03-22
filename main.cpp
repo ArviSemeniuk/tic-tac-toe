@@ -174,24 +174,20 @@ int main()
 	vector<vector<string>> helpGrid = gridFunctions.createDisplayGrid();
 	vector<vector<string>> grid = gridFunctions.showGrid(helpGrid);
 
-	while (win != true && draw != true)
+	while (!win && !draw)
 	{
 		// human player move
 		humanMove = human.playerMove(grid);
 		grid = gridFunctions.updateGrid(grid, humanMove, humanSymbol, isHuman, helpGrid);
-		if (win = winCheck(grid, human))
-			break;
 
-		if (draw = drawCheck(grid)) 
+		if (winCheck(grid, human) || drawCheck(grid))
 			break;
 	
 		// computer player move
 		compMove = comp.playerMove(grid);
 		grid = gridFunctions.updateGrid(grid, compMove, compSymbol, isComp, helpGrid);
-		if (win = winCheck(grid, comp))
-			break;
 
-		if (draw = drawCheck(grid))
+		if (winCheck(grid, comp) || drawCheck(grid))
 			break;
 	}
 
