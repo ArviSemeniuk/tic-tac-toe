@@ -8,6 +8,7 @@
 
 using std::cout;
 using std::cin;
+using std::endl;
 using std::vector;
 using std::string;
 using std::find;
@@ -17,7 +18,7 @@ using std::system;
 
 Player human;
 Computer comp;
-const vector<vector<string>> helpGrid = gridFunctions.createDisplayGrid();
+const vector<vector<string>> helpGrid = createDisplayGrid();
 const size_t gridSize = getGridSize(helpGrid);
 
 
@@ -182,20 +183,20 @@ int main()
 	bool draw = false;
 	int humanMove;
 	int compMove;
-	vector<vector<string>> grid = gridFunctions.showGrid(helpGrid, gridSize);
+	vector<vector<string>> grid = showGrid(helpGrid, gridSize);
 
 	while (!win && !draw)
 	{
 		// human player move
 		humanMove = human.playerMove(grid);
-		grid = gridFunctions.updateGrid(grid, humanMove, humanSymbol, isHuman, helpGrid, gridSize);
+		grid = updateGrid(grid, humanMove, humanSymbol, isHuman, helpGrid, gridSize);
 
 		if (winCheck(grid, isHuman, humanName) || drawCheck(grid))
 			break;
 	
 		// computer player move
 		compMove = comp.playerMove(grid);
-		grid = gridFunctions.updateGrid(grid, compMove, compSymbol, isComp, helpGrid, gridSize);
+		grid = updateGrid(grid, compMove, compSymbol, isComp, helpGrid, gridSize);
 
 		if (winCheck(grid, isComp, compName) || drawCheck(grid))
 			break;

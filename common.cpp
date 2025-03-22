@@ -26,10 +26,3 @@ vector<string> collectDiag(const vector<vector<string>> grid, const bool collect
 		return rightDiagList;
 	}
 }
-
-
-size_t getGridSize(const vector<vector<string>>& grid)
-{
-	size_t size = grid.size();
-	return size;
-}
