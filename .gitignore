@@ -14,3 +14,4 @@
 *.exe
 *.obj
 /tic-tac-toe/x64/Debug/tic-tac-toe.tlog
+/tic-tac-toe/x64/Debug/tic-tac-toe.tlog/CL.read.1.tlog

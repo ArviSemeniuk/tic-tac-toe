@@ -1,13 +1,29 @@
-#include <iostream>
-#include <vector>
 #include "player.h"
 #include "grid.h"
-using namespace std;
+#include "common.h"
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+using std::cout;
+using std::cin;
+using std::vector;
+using std::string;
+using std::find;
+using std::any_of;
+using std::all_of;
+using std::system;
+
+Player human;
+Computer comp;
+const vector<vector<string>> helpGrid = gridFunctions.createDisplayGrid();
+const size_t gridSize = getGridSize(helpGrid);
 
 
-static bool colWin(const vector<vector<string>> grid, const int col)
+static bool colWin(const vector<vector<string>>& grid, const int& col)
 {
-	for (int i = 1; i < 5; i++) {
+	for (int i = 1; i < gridSize; i++) {
 		if (grid[i][col] != grid[0][col]) {
 			return false;
 		}
@@ -16,9 +32,9 @@ static bool colWin(const vector<vector<string>> grid, const int col)
 }
 
 
-static bool rowWin(const vector<string> &row)
+static bool rowWin(const vector<string>& row)
 {
-	for (size_t i = 1; i < row.size(); i++) {
+	for (int i = 1; i < gridSize; i++) {
 		if (row[i] != row[0]) {
 			return false;
 		}
@@ -27,11 +43,11 @@ static bool rowWin(const vector<string> &row)
 }
 
 
-static bool leftDiagWin(const vector<vector<string>> grid)
+static bool leftDiagWin(const vector<vector<string>>& grid)
 {
 	string leftDiag = grid[0][0];
 
-	for (int i = 1; i < grid.size(); i++) {
+	for (int i = 1; i < gridSize; i++) {
 		if (grid[i][i] != leftDiag) {
 			return false;
 		}
@@ -40,13 +56,12 @@ static bool leftDiagWin(const vector<vector<string>> grid)
 }
 
 
-static bool rightDiagWin(const vector<vector<string>> grid)
+static bool rightDiagWin(const vector<vector<string>>& grid)
 {
-	size_t size = grid.size();
-	string rightDiag = grid[0][size - 1];
+	string rightDiag = grid[0][gridSize - 1];
 
-	for (int i = 1; i < grid.size(); i++) {
-		if (grid[i][size - 1 - i] != rightDiag) {
+	for (int i = 1; i < gridSize; i++) {
+		if (grid[i][gridSize - 1 - i] != rightDiag) {
 			return false;
 		}
 	}
@@ -54,10 +69,9 @@ static bool rightDiagWin(const vector<vector<string>> grid)
 }
 
 
-static bool drawCondition(const vector<vector<string>> grid)
+static bool drawCondition(const vector<vector<string>>& grid)
 {
 	vector<bool> possibleWin; // vector to store bool values which represent if the game can still be won
-	size_t size = grid.size();
 	
 	// checks to see if row wins are possible
 	for (const auto& row : grid) {
@@ -70,7 +84,7 @@ static bool drawCondition(const vector<vector<string>> grid)
 	}
 
 	// checks to see if col wins are possible
-	for (int col = 0; col < size; col++) {
+	for (int col = 0; col < gridSize; col++) {
 		if (any_of(grid.begin(), grid.end(), [&](const vector<string> row) {return row[col] == "X";}) &&
 			any_of(grid.begin(), grid.end(), [&](const vector<string> row) {return row[col] == "O";})) {
 			possibleWin.push_back(false);
@@ -92,7 +106,7 @@ static bool drawCondition(const vector<vector<string>> grid)
 		possibleWin.push_back(true);
 
 	// determine if win is possible
-	if (all_of(possibleWin.begin(), possibleWin.end(), [](bool i) {return i == false;}))
+	if (all_of(possibleWin.begin(), possibleWin.end(), [](bool canWin) {return canWin == false;}))
 		return true;
 	else
 		return false;
@@ -100,7 +114,7 @@ static bool drawCondition(const vector<vector<string>> grid)
 
 
 // check every win condition 
-static bool winCondition(const vector<vector<string>> grid)
+static bool winCondition(const vector<vector<string>>& grid)
 {
 	// check each row
 	for (const auto& row : grid) {
@@ -109,7 +123,7 @@ static bool winCondition(const vector<vector<string>> grid)
 		}
 	}
 	// check each col
-	for (int j = 0; j < 5; j++) {
+	for (int j = 0; j < gridSize; j++) {
 		if (colWin(grid, j)) {
 			return true;
 		}
@@ -123,23 +137,23 @@ static bool winCondition(const vector<vector<string>> grid)
 }
 
 
-static bool winCheck(const vector<vector<string>> grid, const Player p)
+static bool winCheck(const vector<vector<string>>& grid, const bool& isHuman, const string& playerName)
 {
 	bool win = winCondition(grid);
 
-	if (win && p.getHuman() == true) {
-		cout << "Congratulations " << p.getName() << " You Won!" << endl;
+	if (win && isHuman) {
+		cout << "Congratulations " << playerName << " You Won!" << endl;
 		return true;
 	}
 	else if (win) {
-		cout << "Unlucky! " << p.getName() << " Won the game!" << endl;
+		cout << "Unlucky! " << playerName << " Won the game!" << endl;
 		return true;
 	}
 	return false;
 }
 
 
-static bool drawCheck(const vector<vector<string>> grid)
+static bool drawCheck(const vector<vector<string>>& grid)
 {
 	bool draw = drawCondition(grid);
 
@@ -153,41 +167,37 @@ static bool drawCheck(const vector<vector<string>> grid)
 
 int main()
 {
-	Player human;
-	human.setHuman(true);
 	human.setName();
 	human.setSymbol();
-	string const humanSymbol = human.getSymbol();
-	bool const isHuman = human.getHuman();
+	const string humanName = human.getName();
+	const string humanSymbol = human.getSymbol();
+	const bool isHuman = human.getHuman();
 
-	Computer comp;
 	comp.setSymbol(human.getSymbol());
-	string const compSymbol = comp.getSymbol();
-	bool const isComp = comp.getHuman();
+	const string compName = comp.getName();
+	const string compSymbol = comp.getSymbol();
+	const bool isComp = comp.getHuman();
 
-	// default game state
 	bool win = false;
 	bool draw = false;
 	int humanMove;
 	int compMove;
-	
-	vector<vector<string>> helpGrid = gridFunctions.createDisplayGrid();
-	vector<vector<string>> grid = gridFunctions.showGrid(helpGrid);
+	vector<vector<string>> grid = gridFunctions.showGrid(helpGrid, gridSize);
 
 	while (!win && !draw)
 	{
 		// human player move
 		humanMove = human.playerMove(grid);
-		grid = gridFunctions.updateGrid(grid, humanMove, humanSymbol, isHuman, helpGrid);
+		grid = gridFunctions.updateGrid(grid, humanMove, humanSymbol, isHuman, helpGrid, gridSize);
 
-		if (winCheck(grid, human) || drawCheck(grid))
+		if (winCheck(grid, isHuman, humanName) || drawCheck(grid))
 			break;
 	
 		// computer player move
 		compMove = comp.playerMove(grid);
-		grid = gridFunctions.updateGrid(grid, compMove, compSymbol, isComp, helpGrid);
+		grid = gridFunctions.updateGrid(grid, compMove, compSymbol, isComp, helpGrid, gridSize);
 
-		if (winCheck(grid, comp) || drawCheck(grid))
+		if (winCheck(grid, isComp, compName) || drawCheck(grid))
 			break;
 	}
 
