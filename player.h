@@ -169,31 +169,46 @@ vector<string> collectDiag(const vector<vector<string>> grid, const bool collect
 
 
 // function to win or block 4 in a row/col
-int winOrBlockFour(const vector<vector<string>> grid, const string symbol)
+int winOrBlockFour(const vector<vector<string>> grid, const string symbol, int playerMove)
 {
-	int move = -1;
 	vector<vector<string>> transposedGrid = transposeGrid(grid);
 
 	// check each row and col to see if there is four O or X
 	for (int row = 0; row < 5; row++) {
+		// check rows
 		if (count(grid[row].begin(), grid[row].end(), symbol) == 4) {
 			for (int col = 0; col < 5; col++) {
 				if (grid[row][col] != "X" && grid[row][col] != "O") {
-					move = stoi(grid[row][col]);
-					return move;
+					playerMove = stoi(grid[row][col]);
+					return playerMove;
 				}
 			}
 		}
+		// check cols
 		if (count(transposedGrid[row].begin(), transposedGrid[row].end(), symbol) == 4) {
 			for (int col = 0; col < 5; col++) {
 				if (transposedGrid[row][col] != "X" && transposedGrid[row][col] != "O") {
-					move = stoi(transposedGrid[row][col]);
-					return move;
+					playerMove = stoi(transposedGrid[row][col]);
+					return playerMove;
 				}
 			}
 		}
 	}
-	return move;
+	return playerMove;
+}
+
+
+int diagWinOrBlock(const vector<string> diagList, int playerMove)
+{
+	if (count(diagList.begin(), diagList.end(), "X") == 4 || count(diagList.begin(), diagList.end(), "O") == 4) {
+		for (int col = 0; col < 5; col++) {
+			if (diagList[col] != "X" && diagList[col] != "O") {
+				playerMove = stoi(diagList[col]);
+				return playerMove;
+			}
+		}
+	}
+	return playerMove;
 }
 
 
@@ -209,34 +224,25 @@ int fourToFind(const vector<vector<string>> grid, const string compSymbol)
 	else
 		losingSymbol = "X";
 	
-	playerMove = winOrBlockFour(grid, winningSymbol);
+	// check rows and cols to see if there are four O or X
+	playerMove = winOrBlockFour(grid, winningSymbol, playerMove);
 	if (playerMove != -1)
 		return playerMove;
-	playerMove = winOrBlockFour(grid, losingSymbol);
+	playerMove = winOrBlockFour(grid, losingSymbol, playerMove);
 	if (playerMove != -1)
 		return playerMove;
 
-	// check diagonals to see if there are four
+	// check diagonals to see if there are four O or X
 	vector<string> leftDiagList = collectDiag(grid, true);
 	vector<string> rightDiagList = collectDiag(grid, false);
-	
-	if (count(leftDiagList.begin(), leftDiagList.end(), "X") == 4 || count(leftDiagList.begin(), leftDiagList.end(), "O") == 4) {
-		for (int col = 0; col < 5; col++) {
-			if (leftDiagList[col] != "X" && leftDiagList[col] != "O") {
-				playerMove = stoi(leftDiagList[col]);
-				return playerMove;
-			}
-		}
-	}
-	if (count(rightDiagList.begin(), rightDiagList.end(), "X") == 4 || count(rightDiagList.begin(), rightDiagList.end(), "O") == 4) {
-		for (int col = 0; col < 5; col++) {
-			if (rightDiagList[col] != "X" && rightDiagList[col] != "O") {
-				playerMove = stoi(rightDiagList[col]);
-				return playerMove;
-			}
-		}
-	}
 
+	playerMove = diagWinOrBlock(leftDiagList, playerMove);
+	if (playerMove != -1)
+		return playerMove;
+	playerMove = diagWinOrBlock(rightDiagList, playerMove);
+	if (playerMove != -1)
+		return playerMove;
+	
 	return playerMove;
 }
 
