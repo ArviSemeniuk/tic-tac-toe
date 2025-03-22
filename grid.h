@@ -29,13 +29,6 @@ struct
 	}
 
 
-	size_t getGridSize(const vector<vector<string>>& grid)
-	{
-		size_t size = grid.size();
-		return size;
-	}
-
-
 	vector<vector<string>> showGrid(const vector<vector<string>>& matrix, const size_t& gridSize)
 	{
 		// Display 5x5 grid

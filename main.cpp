@@ -1,8 +1,10 @@
+#include "player.h"
+#include "grid.h"
+#include "common.h"
+
 #include <iostream>
 #include <vector>
 #include <string>
-#include "player.h"
-#include "grid.h"
 
 using std::cout;
 using std::cin;
@@ -16,7 +18,7 @@ using std::system;
 Player human;
 Computer comp;
 const vector<vector<string>> helpGrid = gridFunctions.createDisplayGrid();
-const size_t gridSize = gridFunctions.getGridSize(helpGrid);
+const size_t gridSize = getGridSize(helpGrid);
 
 
 static bool colWin(const vector<vector<string>>& grid, const int& col)
