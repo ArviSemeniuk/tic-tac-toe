@@ -1,17 +1,4 @@
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
-
 /.vs
-/tic-tac-toe/x64/Debug/hello.log
-/x64/Debug/tic-tac-toe.exe
-/x64/Debug/tic-tac-toe.pdb
-/tic-tac-toe/x64/Debug/tic-tac-toe.tlog/link.read.1.tlog
-/tic-tac-toe/x64/Debug/main.obj
-/tic-tac-toe/x64/Debug/tic-tac-toe.ilk
-/tic-tac-toe/x64/Debug/vc143.idb
-/tic-tac-toe/x64/Debug/vc143.pdb
-*.exe
-*.obj
-/tic-tac-toe/x64/Debug/tic-tac-toe.tlog
-/tic-tac-toe/x64/Debug/tic-tac-toe.tlog/CL.read.1.tlog
