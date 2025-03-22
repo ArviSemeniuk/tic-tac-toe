@@ -3,7 +3,13 @@
 #include <string>
 #include <iostream>
 #include <sstream>
-using namespace std;
+
+using std::vector;
+using std::string;
+using std::cout;
+using std::ostringstream;
+using std::to_string;
+using std::endl;
 
 
 struct
@@ -23,11 +29,18 @@ struct
 	}
 
 
-	vector<vector<string>> showGrid(const vector<vector<string>> matrix)
+	size_t getGridSize(const vector<vector<string>>& grid)
+	{
+		size_t size = grid.size();
+		return size;
+	}
+
+
+	vector<vector<string>> showGrid(const vector<vector<string>>& matrix, const size_t& gridSize)
 	{
 		// Display 5x5 grid
 		ostringstream oss;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < gridSize; i++)
 		{
 			if (i < 2) {
 				oss << "  " << matrix[i][0] << "  |  " << matrix[i][1] << "  |  " << matrix[i][2] << "  |  " << matrix[i][3] << "  |  " << matrix[i][4] << "  \n";
@@ -45,21 +58,21 @@ struct
 	}
 
 
-	vector<vector<string>> updateGrid(vector<vector<string>> oldGrid, const int playerMove, const string symbol, const bool isHuman, const vector<vector<string>> helpGrid)
+	vector<vector<string>> updateGrid(vector<vector<string>>& oldGrid, const int& playerMove, const string& symbol, const bool& isHuman, const vector<vector<string>>& helpGrid, const size_t& gridSize)
 	{
 		ostringstream oss;
 
 		// make new 2d vector to display playing grid to user
 		vector<vector<string>> displayGrid = oldGrid;
-
+		
 		// compute the exact 2d index the player chooses
 		int row = playerMove / 5;
 		int col = playerMove % 5;
 		oldGrid[row][col] = symbol;
 		displayGrid[row][col] = symbol;
 
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 5; j++) {
+		for (int i = 0; i < gridSize; i++) {
+			for (int j = 0; j < gridSize; j++) {
 				if (oldGrid[i][j] != "X" && oldGrid[i][j] != "O")
 					displayGrid[i][j] = " ";
 			}
@@ -67,7 +80,7 @@ struct
 
 		// display updated 5x5 grid
 		// along side the playing grid, display helpful grid
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < gridSize; i++)
 		{
 			if (isHuman == false) {
 				if (i < 2) {

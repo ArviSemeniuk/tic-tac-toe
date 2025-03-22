@@ -1,52 +1,61 @@
 #pragma once
 #include <string>
+#include <vector>
 #include <iostream>
 #include <random>
-using namespace std;
+
+using std::string;
+using std::vector;
+using std::cout;
+using std::cin;
+using std::stoi;
+using std::numeric_limits;
+using std::streamsize;
+using std::random_device;
+using std::mt19937;
+using std::uniform_int_distribution;
 
 
 class Player 
 {
-private:
+protected:
 	bool human;
 	string name;
-protected:
 	string symbol;
 public:
 	// setters
-	void setHuman(bool);
-	void setName();
-	void setSymbol();
+	virtual void setName();
+	virtual void setSymbol();
 
 	// player move function
-	int playerMove(vector<vector<string>> grid);
+	virtual int playerMove(vector<vector<string>> grid);
 
 	// getters
 	bool getHuman() const { return human; }
 	string getName() const { return name; }
 	string getSymbol() const { return symbol; }
 	
-	// constructor
-	Player() 
+	Player()
 	{
-		human = false;
-		name = "Computer";
+		human = true;
 	};
 };
 
 
 class Computer : public Player
 {
+private:
+	using Player::setName;
 public:
-	int playerMove(vector<vector<string>> grid);
+	int playerMove (vector<vector<string>> grid);
 	void setSymbol(string humanSysmbol);
+	
+	Computer()
+	{
+		human = false;
+		name = "Computer";
+	};
 };
-
-
-void Player::setHuman(const bool h)
-{
-	human = h;
-}
 
 
 void Player::setName()
