@@ -130,10 +130,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common.cpp" />
-    <ClCompile Include="comp_player.cpp" />
     <ClCompile Include="grid.cpp" />
-    <ClCompile Include="grid.h" />
-    <ClCompile Include="human_player.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClInclude Include="grid.h" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
