@@ -1,5 +1,4 @@
 #include "player.h"
-#include "common.h"
 
 #include <string>
 #include <vector>
@@ -43,7 +42,7 @@ void Player::setSymbol()
 }
 
 
-int userInputValid(int playerMove)
+static int userInputValid(int playerMove)
 {
 	while (playerMove < 0 || playerMove > 24 || cin.fail() || cin.peek() == '.' || cin.peek() == ' ' || !isspace(cin.peek()))
 	{
@@ -56,7 +55,7 @@ int userInputValid(int playerMove)
 }
 
 
-int positionChosenCheck(int playerMove, const vector<vector<string>> grid)
+static int positionChosenCheck(int playerMove, const vector<vector<string>> grid)
 {
 	// compute grid index of player move
 	int row = playerMove / 5;

@@ -18,7 +18,7 @@ using std::random_device;
 using std::mt19937;
 using std::uniform_int_distribution;
 
-const vector<vector<string>> helpGrid = gridFunctions.createDisplayGrid();
+const vector<vector<string>> helpGrid = createDisplayGrid();
 const size_t gridSize = getGridSize(helpGrid);
 
 
@@ -35,7 +35,7 @@ void Computer::setSymbol(string humanSymbol)
 }
 
 
-vector<vector<string>> transposeGrid(const vector<vector<string>> grid)
+static vector<vector<string>> transposeGrid(const vector<vector<string>> grid)
 {
 	vector<vector<string>> transposedGrid(gridSize, vector<string>());
 
@@ -49,7 +49,7 @@ vector<vector<string>> transposeGrid(const vector<vector<string>> grid)
 
 
 // function to win or block 4 in a row/col
-int winOrBlockFour(const vector<vector<string>> grid, const string symbol, const string oppositeSymbol, int playerMove)
+static int winOrBlockFour(const vector<vector<string>> grid, const string symbol, const string oppositeSymbol, int playerMove)
 {
 	vector<vector<string>> transposedGrid = transposeGrid(grid);
 
@@ -78,7 +78,7 @@ int winOrBlockFour(const vector<vector<string>> grid, const string symbol, const
 }
 
 
-int diagWinOrBlock(const vector<string> diagList, int playerMove)
+static int diagWinOrBlock(const vector<string> diagList, int playerMove)
 {
 	if (count(diagList.begin(), diagList.end(), "X") == 4 || count(diagList.begin(), diagList.end(), "O") == 4) {
 		for (int col = 0; col < gridSize; col++) {
@@ -93,7 +93,7 @@ int diagWinOrBlock(const vector<string> diagList, int playerMove)
 
 
 // function to find any 4 in a row/col/diag
-int fourToFind(const vector<vector<string>> grid, const string compSymbol)
+static int fourToFind(const vector<vector<string>> grid, const string compSymbol)
 {
 	int playerMove = -1; // set to -1 to denote NO 4 in a row found
 	string winningSymbol = compSymbol;
