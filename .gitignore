@@ -20,3 +20,4 @@
 *.suo
 *.userosscache
 *.sln.docstates
+/tic-tac-toe/x64/Debug
