@@ -4,3 +4,19 @@
 /.vs
 /tic-tac-toe/x64/Release
 /main.obj
+
+# Ignore build directories and binaries
+/Debug/
+/Release/
+/x64/
+/x86/
+/*.exe
+/*.dll
+/*.obj
+/*.pdb
+
+# Ignore Visual Studio user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
